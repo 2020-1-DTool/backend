@@ -1,0 +1,508 @@
+{
+  "info": {
+    "_postman_id": "fdca2029-2ca3-46bf-bf13-3cb414c81bc1",
+    "name": "dTool API",
+    "description": "Documentação da API do projeto [dTool](http://tools.ages.pucrs.br/dtool/wiki/wikis/home).\n\n## Mais informações\n\n- [acesse a página do projeto no site da AGES](http://www.ages.pucrs.br/dtool)\n- [acesse a página da wiki do projeto](http://tools.ages.pucrs.br/dtool/wiki/wikis/home)\n\n# Autenticação\n\nFalar sobre segurança das rotas e autenticação basic.\n\n# Endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Relatórios",
+      "item": [
+        {
+          "name": "Gerar relatório simples",
+          "_postman_id": "438f2ec0-30b3-4ca8-9052-d3f6571cdd31",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"technology\": \"bfdhw332jnlc\",\n\t\"professional\": \"luyagde3i\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/reports/simple",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "reports",
+                "simple"
+              ]
+            },
+            "description": "Exporta os tempos de todas as atividades relacionadas a uma função em uma tecnologia."
+          },
+          "response": [
+            {
+              "id": "a689cbe1-0f9d-4a10-9c7a-c874004b399c",
+              "name": "Gerar relatório com uma atividade",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n\t\"technology\": \"bfdhw332jnlc\",\n\t\"professional\": \"luyagde3i\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{api_url}}/reports/simple",
+                  "host": [
+                    "{{api_url}}"
+                  ],
+                  "path": [
+                    "reports",
+                    "simple"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": null,
+              "cookie": [],
+              "responseTime": null,
+              "body": "[\n\t{\n\t\t\"activity\": \"gdaowie9njx\",\n\t\t\"minimumDuration\": 37,\n\t\t\"medianDuration\": 72,\n\t\t\"maximumDuration\": 129\n\t}\n]"
+            },
+            {
+              "id": "811a3029-1b60-45a2-b399-60df5dfa9803",
+              "name": "Gerar relatório com várias atividades",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n\t\"technology\": \"bfdhw332jnlc\",\n\t\"professional\": \"luyagde3i\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{api_url}}/reports/simple",
+                  "host": [
+                    "{{api_url}}"
+                  ],
+                  "path": [
+                    "reports",
+                    "simple"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": null,
+              "cookie": [],
+              "responseTime": null,
+              "body": "[\n    {\n        \"activity\": \"gdaowie9njx\",\n        \"minimumDuration\": 37,\n        \"medianDuration\": 72,\n        \"maximumDuration\": 129\n    },\n    {\n        \"activity\": \"actv002\",\n        \"minimumDuration\": 67,\n        \"medianDuration\": 350,\n        \"maximumDuration\": 496\n    }\n]"
+            },
+            {
+              "id": "06946043-9d90-4e4e-9695-a9d13c84f5af",
+              "name": "Erro ao gerar relatório",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n\t\"professional\": \"luyagde3i\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{api_url}}/reports/simple",
+                  "host": [
+                    "{{api_url}}"
+                  ],
+                  "path": [
+                    "reports",
+                    "simple"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": null,
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n\t\"code\": \"bad_request/missing_fields\"\n}"
+            }
+          ]
+        }
+      ],
+      "_postman_id": "53044f01-4299-4324-9929-9e130d1ef08e",
+      "description": "Requests para geração de relatórios.\n\nDois tipos de relatórios são suportados:\n- simples: contém apenas os tempos mínimo, mediano e máximo das atividades de um profissional em uma tecnologia; requer a identificação da tecnologia e profissional;\n- completo: contém todos os registros de tempo já realizados; usado por gestores de instituição e administradores do sistema.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "15fdee55-9d84-4a30-8d15-16727d4ff162",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "515c7798-6336-4cf3-9b29-501651a0e394",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validar código de acesso",
+      "_postman_id": "dd1972c4-b683-4bd9-80aa-c64ef83b46fe",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"code\": \"DPXG\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{api_url}}/auth",
+          "host": [
+            "{{api_url}}"
+          ],
+          "path": [
+            "auth"
+          ]
+        },
+        "description": "Valida um código de acesso ao aplicativo, indicando o tipo de código:\n- administração do app;\n- administração de um hospital;\n- contagem de tempo de um hospital.\n\nO retorno contém:\n- o nível de permissão do código (`permission`): `time-tracking`, `administration-hospital` ou `administration-app`;\n- um token JWT a ser usado em todos os outros requests para a API (como autenticação _Bearer_): `accessToken`;\n- informações da instituição: funções, tecnologias e atividades (se for um código relacionado a uma instituição);\n- informações das instituições cadastradas (se for um código de administração)."
+      },
+      "response": [
+        {
+          "id": "e99d7a3d-9aac-4e89-baae-db873050a57a",
+          "name": "Código para contagem de tempos",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"code\": \"HSLC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/code",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "code"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": null,
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"type\":\"time-tracking\",\n    \"healthInstitution\":{\n        \"name\":\"Hospital São Lucas da PUCRS\"\n    },\n    \"professionals\":[\n        {\n            \"id\":\"luyagde3i\",\n            \"name\":\"Enfermeiro\"\n        },\n        {\n            \"id\":\"cirg\",\n            \"name\":\"Cirurgião\"\n        },\n        {\n            \"id\":\"pss\",\n            \"name\":\"Psicólogo\"\n        }\n    ],\n    \"technologies\":[\n        {\n            \"id\":\"bfdhw332jnlc\",\n            \"name\":\"AVC\",\n            \"activities\":[\n                {\n                    \"id\":\"gdaowie9njx\",\n                    \"name\":\"Medir pressão\",\n                    \"professionals\":[\n                        \"luyagde3i\",\n                        \"pss\"\n                    ]\n                },\n                {\n                    \"id\":\"atvvssp\",\n                    \"name\":\"Coletar sangue\",\n                    \"professionals\":[\n                        \"pss\",\n                        \"cirg\"\n                    ]\n                }\n            ]\n        },\n        {\n            \"id\":\"tech000\",\n            \"name\":\"Infarto\",\n            \"activities\":[\n                {\n                    \"id\":\"p0lkmxfe\",\n                    \"name\":\"Indicar medicamentos\",\n                    \"professionals\":[\n                        \"pss\"\n                    ]\n                }\n            ]\n        }\n    ]\n}"
+        },
+        {
+          "id": "493e1d12-58d5-49dd-af26-da9af5bd8944",
+          "name": "Erro - Sem código",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/auth",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "37"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"25-oxk1mc7c4fqUOfSE0+uV3Bz/r6E\""
+            },
+            {
+              "key": "Date",
+              "value": "Wed, 08 Apr 2020 22:52:31 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"code\": \"bad_request/missing_fields\"\n}"
+        },
+        {
+          "id": "d3ff18d9-b23a-4b67-a219-a9d1c4790463",
+          "name": "Error - Código não encontrado",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"code\": \"AAAA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/auth",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "20"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"14-KK80Et5iWQlOUl91MVMsaJ4NvB4\""
+            },
+            {
+              "key": "Date",
+              "value": "Wed, 08 Apr 2020 22:55:01 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"code\": \"not_found\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Registrar execução de atividades",
+      "_postman_id": "648896d0-f1fc-4ac8-962d-18c324b384d8",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n\t{\n\t\t\"technology\": \"bfdhw332jnlc\",\n\t\t\"activity\": \"gdaowie9njx\",\n\t\t\"professional\": \"luyagde3i\",\n\t\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\t\"startDate\": \"2020-04-04T14:20:37-0300\",\n\t\t\"duration\": 97\n\t},\n\t{\n\t\t\"technology\": \"bfdhw332jnlc\",\n\t\t\"activity\": \"actv001\",\n\t\t\"professional\": \"luyagde3i\",\n\t\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\t\"startDate\": \"2020-04-04T18:00:54-0300\",\n\t\t\"duration\": 326\n\t}\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{api_url}}/executions",
+          "host": [
+            "{{api_url}}"
+          ],
+          "path": [
+            "executions"
+          ]
+        },
+        "description": "Permite registrar a execução de múltiplas atividades em um único request.\n\nA identificação do hospital ocorre através do header `Authorization`, usando o token JWT obtido com o request de validação de código de acesso."
+      },
+      "response": [
+        {
+          "id": "0503f086-db3a-4b8a-a13d-652c78b40850",
+          "name": "Registrar uma atividade",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n\t{\n\t\t\"technology\": \"bfdhw332jnlc\",\n\t\t\"activity\": \"gdaowie9njx\",\n\t\t\"professional\": \"luyagde3i\",\n\t\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\t\"startDate\": \"2020-04-04T14:20:37-0300\",\n\t\t\"duration\": 97\n\t}\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/executions",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "executions"
+              ]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": null,
+          "header": [],
+          "cookie": [],
+          "responseTime": null,
+          "body": ""
+        },
+        {
+          "id": "1b18e6d3-707d-4a2e-9144-4ccbbac934ed",
+          "name": "Registrar várias atividades",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n\t{\n\t\t\"technology\": \"bfdhw332jnlc\",\n\t\t\"activity\": \"gdaowie9njx\",\n\t\t\"professional\": \"luyagde3i\",\n\t\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\t\"startDate\": \"2020-04-04T14:20:37-0300\",\n\t\t\"duration\": 97\n\t},\n\t{\n\t\t\"technology\": \"bfdhw332jnlc\",\n\t\t\"activity\": \"actv001\",\n\t\t\"professional\": \"luyagde3i\",\n\t\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\t\"startDate\": \"2020-04-04T18:00:54-0300\",\n\t\t\"duration\": 326\n\t}\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/executions",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "executions"
+              ]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": null,
+          "header": null,
+          "cookie": [],
+          "responseTime": null,
+          "body": null
+        },
+        {
+          "id": "909ab97c-6090-4694-a3ab-f815dd7c51b1",
+          "name": "Falha ao registrar atividades",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n\t{\n\t\t\"activity\": \"gdaowie9njx\",\n\t\t\"professional\": \"luyagde3i\",\n\t\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\t\"startDate\": \"2020-04-04T14:20:37-0300\",\n\t\t\"duration\": 97\n\t},\n\t{\n\t\t\"technology\": \"bfdhw332jnlc\",\n\t\t\"activity\": \"actv001\",\n\t\t\"professional\": \"luyagde3i\",\n\t\t\"startDate\": \"2020-04-04T18:00:54-0300\",\n\t\t\"duration\": 326\n\t}\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/executions",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "executions"
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": null,
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n\t\"code\": \"bad_request/missing_fields\"\n}"
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "4bac84cb-54a9-4a69-964f-8e12727c2ef8",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "f18d8b0f-37f1-4598-889d-c6a64ece197c",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

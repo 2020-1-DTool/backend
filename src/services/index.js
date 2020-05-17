@@ -1,0 +1,5 @@
+export { default as Auth } from "./Auth"
+export { default as HealthInstitutionService } from "./HealthInstitutionService"
+export { default as RoleService } from "./RoleService"
+export { default as TechnologyService } from "./TechnologyService"
+export { default as ActivityService } from "./ActivityService"
