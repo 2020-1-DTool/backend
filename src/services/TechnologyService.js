@@ -28,7 +28,6 @@ export default class TechnologyService {
           shortName: activity.short_name,
         }
       })
-      
     }
 
     return technologies
