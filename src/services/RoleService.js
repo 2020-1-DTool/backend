@@ -14,7 +14,7 @@ export default class RoleService {
     const roles = institution?.roles.map(role => {
       return {
         id: role.id,
-        name: role.name
+        name: role.name,
       }
     })
 
