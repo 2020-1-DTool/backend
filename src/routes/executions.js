@@ -1,46 +1,41 @@
 import { Router } from "express"
 import { Container } from "typedi"
 import { Auth, ExecutionService } from "../services"
-import config from "../config"
 
 export default appRouter => {
   const router = Router()
   const authService = Container.get(Auth)
 
-  //Validação do Codigo de Entrada
-  router.post("/", authService.middlewares.requireAppAdministration, (req, res) => {
+  // Validação do Codigo de Entrada
+  router.post("/", authService.middlewares.authenticated, async (req, res) => {
     const executionService = Container.get(ExecutionService)
-    const deviceToken = req.body.deviceToken
+    const { deviceToken, executions } = req.body
 
-  // Confere se o Token for vazio e se não tiver nenhuma execução
-    if (deviceToken == null || req.body.executions.length <= 0) {
+    // Confere se o Token for vazio e se não tiver nenhuma execução
+    if (deviceToken == null || executions.length <= 0) {
       res.status(400).json({
-        "code": "bad_request/missing_fields",
-        "message": "fields 'deviceToken' and 'executions' are required, and there should be at least one execution"
+        code: "bad_request/missing_fields",
+        message: "fields 'deviceToken' and 'executions' are required, and there should be at least one execution",
       })
       return
     }
 
-    for (var item of req.body.executions) {
+    for (const item of executions) {
+      const { activityId, roleId, timestamp, duration } = item
 
-      const activityId = item.activityId
-      const roleId = item.roleId
-      const timestamp = item.timestamp
-      const duration = item.duration  
-
-  // Confere se os valores não são nulos e se tiverem dados faltando
+      // Confere se os valores não são nulos e se tiverem dados faltando
       if (activityId == null || roleId == null || timestamp == null || duration == null) {
         res.status(400).json({
-          "code": "bad_request/missing_fields",
-          "message": "fields 'deviceToken' and 'executions' are required, and there should be at least one execution"
+          code: "bad_request/missing_fields",
+          message: "fields `activityId`, `roleId`, `timestamp` and `duration` are required on all executions",
         })
         return
       }
-    };
+    }
 
-  // Se passar do for, esta tudo certo com os dados e o payload tem uma ou mais execuções a serem enviadas ao banco
-    executionService.createExecution(req.body)
-    res.status(200)
+    // Se passar do for, esta tudo certo com os dados e o payload tem uma ou mais execuções a serem enviadas ao banco
+    await executionService.createExecution(req.body)
+    res.status(201).send()
   })
   appRouter.use("/executions", router)
 }
