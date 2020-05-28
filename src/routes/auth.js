@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { Container } from "typedi"
-import { Auth, HealthInstitutionService, RoleService, TechnologyService, ActivityService } from "../services"
+import { Auth, HealthInstitutionService, RoleService, TechnologyService } from "../services"
 import config from "../config"
 
 export default appRouter => {
@@ -23,9 +23,7 @@ export default appRouter => {
     const healthInstitutionService = Container.get(HealthInstitutionService)
     const roleService = Container.get(RoleService)
     const authService = Container.get(Auth)
-    const activityService = Container.get(ActivityService)
     const technologyService = Container.get(TechnologyService)
-
 
     // se for o código de administração do app
     if (accessCode === config.adminCode) {
