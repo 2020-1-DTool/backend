@@ -32,4 +32,41 @@ export default class TechnologyService {
 
     return technologies
   }
+
+  /**
+   * Exporta a definição de uma tecnologia (matriz atividades x ocupações).
+   * 
+   * @param {number} technologyID ID da tecnologia cuja definição deve ser exportada.
+   * @returns {TechnologyDefinition} Objeto com a definição de uma tecnologia.
+   * 
+   * ----
+   * 
+   * Objeto com a definição de uma tecnologia (atividades, ocupações e matriz atividade x ocupação).
+   * @typedef {Object} TechnologyDefinition
+   * @property {{ name: string; shortName: string }[]} activities Lista de atividades, com nome completo e nome curto (se cadastrado), ordenadas pelo nome.
+   * @property {{ name: string; shortName: string }[]} roles Lista de ocupações, com nome completo e nome curto (se cadastrado), ordenadas pelo nome.
+   * @property {(string | null)[]} matrix Matriz com a definição de quais ocupações executam quais atividades, ordenada de acordo com o array em `activities`.
+   */
+  async exportTechnology(technologyID) {
+    // TODO: implementar na task B02 (https://trello.com/c/84Ukf1dM)
+
+    // exemplo de retorno
+    return {
+      activities: [
+        {
+          name: "Avaliação da recepção do paciente",
+          shortName: "Av. recepção pac."
+        }
+      ],
+      roles: [
+        {
+          name: "Assistente do cirurgião 1",
+          shortName: "Assist. cirurg. 1"
+        }
+      ],
+      matrix: [
+        [null, null, "X", null, "X", "X"]
+      ]
+    }
+  }
 }
