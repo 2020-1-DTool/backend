@@ -17,6 +17,16 @@ export default class ExecutionService {
   }
 
   /**
+   * Atualiza os relatórios consolidados na tabela `roles_activities`.
+   * 
+   * Essa função atualiza as durações mínima, mediana e máxima de todos os pares
+   * atividade x ocupação.
+   */
+  async updateConsolidatedReport() {
+    // TODO: implementar (https://trello.com/c/HiBdKv5z)
+  }
+
+  /**
    * Gera um relatório com os dados consolidados das execuções de atividades de uma tecnologia.
    * 
    * Atividades que não tiveram execuções por uma ocupação retornarão com durações iguais a `0`. Por exemplo,
@@ -35,7 +45,7 @@ export default class ExecutionService {
    * ```
    * 
    * @param {number} technologyID ID da tecnologia cujo relatório consolidado deve ser exportado.
-   * @returns {ConsolidatedReportEntry[]} Lista com os dados consolidados de cada par atividade-ocupação, ordenados pelo nome da ocupação.
+   * @returns {Promise<ConsolidatedReportEntry[]>} Lista com os dados consolidados de cada par atividade-ocupação, ordenados pelo nome da ocupação.
    * 
    * ----
    * 
@@ -70,7 +80,7 @@ export default class ExecutionService {
    * Gera um relatório com todas as execuções de atividades de uma tecnologia.
    *
    * @param {number} technologyID ID da tecnologia cujas execuções devem ser exportadas.
-   * @returns {ExecutionEntry[]} Lista com todas as execuções da tecnologia, ordenada pelo nome da ocupação.
+   * @returns {Promise<ExecutionEntry[]>} Lista com todas as execuções da tecnologia, ordenada pelo nome da ocupação.
    *
    * ----
    * 
