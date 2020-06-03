@@ -15,6 +15,7 @@ export default class RoleService {
       return {
         id: role.id,
         name: role.name,
+        shortName: role.shortName
       }
     })
 
@@ -27,7 +28,7 @@ export default class RoleService {
         return {
           id: activity.id,
           name: activity.name,
-          shortName: activity.short_name,
+          shortName: activity.shortName,
         }
       })
     }
