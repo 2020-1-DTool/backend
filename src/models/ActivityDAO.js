@@ -14,7 +14,7 @@ export const setup = sequelize => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      short_name: DataTypes.STRING,
+      shortName: DataTypes.STRING,
     },
     { sequelize, modelName: "activity" }
   )

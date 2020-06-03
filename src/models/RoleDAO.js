@@ -14,6 +14,7 @@ export const setup = sequelize => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      shortName: DataTypes.STRING,
     },
     { sequelize, modelName: "role" }
   )
