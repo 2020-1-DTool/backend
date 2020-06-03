@@ -17,10 +17,10 @@ export default class ExecutionService {
   }
 
   /**
-   * Atualiza os relatórios consolidados na tabela `roles_activities`.
-   * 
+   * Atualiza os relatórios consolidados na tabela `role_activities`.
+   *
    * Essa função atualiza as durações mínima, mediana e máxima de todos os pares
-   * atividade x ocupação.
+   * atividade x ocupação, assim como o timestamp da última consolidação.
    */
   async updateConsolidatedReport() {
     // TODO: implementar (https://trello.com/c/HiBdKv5z)
@@ -28,10 +28,10 @@ export default class ExecutionService {
 
   /**
    * Gera um relatório com os dados consolidados das execuções de atividades de uma tecnologia.
-   * 
+   *
    * Atividades que não tiveram execuções por uma ocupação retornarão com durações iguais a `0`. Por exemplo,
    * se nenhum anestesista executou a atividade "Cuidados na SR", será retornado um objeto conforme xemplo abaixo:
-   * 
+   *
    * ```
    *     {
    *       activityID: 3,
@@ -43,20 +43,12 @@ export default class ExecutionService {
    *       maximumDuration: 0,
    *     }
    * ```
-   * 
+   *
    * @param {number} technologyID ID da tecnologia cujo relatório consolidado deve ser exportado.
-   * @returns {Promise<ConsolidatedReport[]>} Objeto com informações consolidadas sobre todas as execuções de atividades da tecnologia.
-   * 
+   * @returns {Promise<ConsolidatedReportEntry[]>} Objeto com informações consolidadas sobre todas as execuções de atividades da tecnologia.
+   *
    * ----
-   * 
-   * @typedef {Object} ConsolidatedReport Objeto com dados consolidados de múltiplas execuções.
-   * @property {CondolidatedReportSummary} summary "Resumo" das execuções.
-   * @property {ConsolidatedReportEntry[]} activities Lista com os dados consolidados de cada par atividade-ocupação, ordenados pelo nome da ocupação.
-   * 
-   * @typedef {Object} CondolidatedReportSummary Objeto que descreve o resumo do relatório consolidado.
-   * @property {number} activitiesExecuted Quantas vezes as atividades da tecnologia foram executadas.
-   * @property {number} timeSpent Minutos totais gastos na execução de atividades da tecnologia.
-   * 
+   *
    * @typedef {Object} ConsolidatedReportEntry Objeto que descreve um registro consolidado de execuções de um par atividade-ocupação.
    * @property {number} activityID ID da atividade.
    * @property {string} activity Nome da atividade.
@@ -65,28 +57,24 @@ export default class ExecutionService {
    * @property {number} minimumDuration Duração mínima das execuções, em minutos.
    * @property {number} medianDuration Mediana das durações das execuções, em minutos.
    * @property {number} maximumDuration Duração máxima das execuções, em minutos.
+   * @property {string} lastUpdate Data/hora da última atualização dos dados consolidados (ISO 8601).
    */
-  async exportConsolidatedReport(technologyID) {
+  async exportConsolidatedExecutions(technologyID) {
     // TODO: implementar (https://trello.com/c/HiBdKv5z)
 
     // exemplo de retorno
-    return {
-      summary: {
-        activitiesExecuted: 2,
-        timestamp: 300 // minutos
+    return [
+      {
+        activityID: 1,
+        activity: "Cirurgia",
+        roleID: 2,
+        role: "Anestesista",
+        minimumDuration: 37 / 60, // armazenado no banco em segundos, deve retornar em minutos
+        medianDuration: 72 / 60, // armazenado no banco em segundos, deve retornar em minutos
+        maximumDuration: 129 / 60, // armazenado no banco em segundos, deve retornar em minutos
+        lastUpdate: "2020-06-03T12:40:32-0300", // ISO 8601
       },
-      activities: [
-        {
-          activityID: 1,
-          activity: "Cirurgia",
-          roleID: 2,
-          role: "Anestesista",
-          minimumDuration: 37 / 60, // armazenado no banco em segundos, deve retornar em minutos
-          medianDuration: 72 / 60, // armazenado no banco em segundos, deve retornar em minutos
-          maximumDuration: 129 / 60 // armazenado no banco em segundos, deve retornar em minutos
-        }
-      ]
-    }
+    ]
   }
 
   /**
@@ -96,7 +84,7 @@ export default class ExecutionService {
    * @returns {Promise<ExecutionEntry[]>} Lista com todas as execuções da tecnologia, ordenada pelo nome da ocupação.
    *
    * ----
-   * 
+   *
    * Objeto que descreve um registro de execução.
    * @typedef {Object} ExecutionEntry
    * @property {string} activity Nome da atividade.

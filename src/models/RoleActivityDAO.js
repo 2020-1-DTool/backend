@@ -7,5 +7,6 @@ export const setup = sequelize => {
     minimum: DataTypes.DOUBLE,
     median: DataTypes.DOUBLE,
     maximum: DataTypes.DOUBLE,
+    lastUpdate: DataTypes.DATE,
   }, { sequelize, modelName: "role_activity" })
 }
