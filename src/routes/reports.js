@@ -16,7 +16,7 @@ export default appRouter => {
   router.get("/complete", authService.middlewares.requireHospitalAdministration, async (req, res) => {
     // instituição vem a partir do token da autenticação; usar código de acesso para saber ID da instituição
     
-    /* ESTE BLOCO DE CODIGO ESTA DANDO ERRO MESMO SEM MODIFICACOES, NAO ENTENDI O QUE ACONTECE
+    /* ESTE BLOCO DE CODIGO ESTA DANDO ERRO MESMO SEM MODIFICACOES, NAO ENTENDI O QUE ACONTECE (undefined)
     const healthInstitutionService = Container.get(HealthInstitutionService)
     const institution = await healthInstitutionService.getInformations(req.auth.accessCode)
     */
