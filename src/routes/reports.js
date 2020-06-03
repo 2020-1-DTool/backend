@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { Container } from "typedi"
-import { Auth, HealthInstitutionService } from "../services"
+import { Auth, HealthInstitutionService, ReportService } from "../services"
 
 export default appRouter => {
   const router = Router() // /reports
@@ -15,14 +15,14 @@ export default appRouter => {
   // relatório completo (para gestores, XLSX)
   router.get("/complete", authService.middlewares.requireHospitalAdministration, async (req, res) => {
     // instituição vem a partir do token da autenticação; usar código de acesso para saber ID da instituição
+    
+    /* ESTE BLOCO DE CODIGO ESTA DANDO ERRO MESMO SEM MODIFICACOES, NAO ENTENDI O QUE ACONTECE
     const healthInstitutionService = Container.get(HealthInstitutionService)
     const institution = await healthInstitutionService.getInformations(req.auth.accessCode)
-
-    // TODO: implementar na task B03 (https://trello.com/c/VXgx1w4r)
-    // usar função ReportService.generateCompleteReport(...)
+    */
 
     // exemplo de retorno de arquivo
-    res.download("<arquivo temporário criado pelo ReportService>.xlsx", "Relatório dTool - <nome da instituição>.xlsx")
+    res.download(ReportService.generateCompleteReport(1)) // ERRO AQUI, NÃO DÁ PARA CHAMAR O METODO
   })
 
   appRouter.use("/reports", router)
