@@ -45,12 +45,19 @@ export default class ExecutionService {
    * ```
    * 
    * @param {number} technologyID ID da tecnologia cujo relatório consolidado deve ser exportado.
-   * @returns {Promise<ConsolidatedReportEntry[]>} Lista com os dados consolidados de cada par atividade-ocupação, ordenados pelo nome da ocupação.
+   * @returns {Promise<ConsolidatedReport[]>} Objeto com informações consolidadas sobre todas as execuções de atividades da tecnologia.
    * 
    * ----
    * 
-   * Objeto que descreve um registro consolidado de execuções de um par atividade-ocupação.
-   * @typedef {Object} ConsolidatedReportEntry
+   * @typedef {Object} ConsolidatedReport Objeto com dados consolidados de múltiplas execuções.
+   * @property {CondolidatedReportSummary} summary "Resumo" das execuções.
+   * @property {ConsolidatedReportEntry[]} activities Lista com os dados consolidados de cada par atividade-ocupação, ordenados pelo nome da ocupação.
+   * 
+   * @typedef {Object} CondolidatedReportSummary Objeto que descreve o resumo do relatório consolidado.
+   * @property {number} activitiesExecuted Quantas vezes as atividades da tecnologia foram executadas.
+   * @property {number} timeSpent Minutos totais gastos na execução de atividades da tecnologia.
+   * 
+   * @typedef {Object} ConsolidatedReportEntry Objeto que descreve um registro consolidado de execuções de um par atividade-ocupação.
    * @property {number} activityID ID da atividade.
    * @property {string} activity Nome da atividade.
    * @property {number} roleID ID da ocupação.
@@ -59,21 +66,27 @@ export default class ExecutionService {
    * @property {number} medianDuration Mediana das durações das execuções, em minutos.
    * @property {number} maximumDuration Duração máxima das execuções, em minutos.
    */
-  async exportConsolidatedExecutions(technologyID) {
+  async exportConsolidatedReport(technologyID) {
     // TODO: implementar (https://trello.com/c/HiBdKv5z)
 
     // exemplo de retorno
-    return [
-      {
-        activityID: 1,
-        activity: "Cirurgia",
-        roleID: 2,
-        role: "Anestesista",
-        minimumDuration: 37 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        medianDuration: 72 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        maximumDuration: 129 / 60 // armazenado no banco em segundos, deve retornar em minutos
-      }
-    ]
+    return {
+      summary: {
+        activitiesExecuted: 2,
+        timestamp: 300 // minutos
+      },
+      activities: [
+        {
+          activityID: 1,
+          activity: "Cirurgia",
+          roleID: 2,
+          role: "Anestesista",
+          minimumDuration: 37 / 60, // armazenado no banco em segundos, deve retornar em minutos
+          medianDuration: 72 / 60, // armazenado no banco em segundos, deve retornar em minutos
+          maximumDuration: 129 / 60 // armazenado no banco em segundos, deve retornar em minutos
+        }
+      ]
+    }
   }
 
   /**
