@@ -25,7 +25,7 @@ export default class TechnologyService {
         return {
           id: activity.id,
           name: activity.name,
-          shortName: activity.short_name,
+          shortName: activity.shortName,
         }
       })
     }
