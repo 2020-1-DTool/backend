@@ -15,14 +15,13 @@ export default appRouter => {
   // relatório completo (para gestores, XLSX)
   router.get("/complete", authService.middlewares.requireHospitalAdministration, async (req, res) => {
     // instituição vem a partir do token da autenticação; usar código de acesso para saber ID da instituição
-    
-    /* ESTE BLOCO DE CODIGO ESTA DANDO ERRO MESMO SEM MODIFICACOES, NAO ENTENDI O QUE ACONTECE (undefined)
-    const healthInstitutionService = Container.get(HealthInstitutionService)
-    const institution = await healthInstitutionService.getInformations(req.auth.accessCode)
-    */
 
-    // exemplo de retorno de arquivo
-    res.download(ReportService.generateCompleteReport(1)) // ERRO AQUI, NÃO DÁ PARA CHAMAR O METODO
+    const healthInstitutionService = Container.get(HealthInstitutionService)
+    //const institution = await healthInstitutionService.getInformations(req.auth.accessCode)
+
+    const reportService = Container.get(ReportService)
+    const temporaryFile = await reportService.generateCompleteReport(1)
+    res.download(temporaryFile)
   })
 
   appRouter.use("/reports", router)
