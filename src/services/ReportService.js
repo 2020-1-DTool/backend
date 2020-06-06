@@ -11,7 +11,7 @@ export default class ReportService {
     // TODO: implementar na task B03 (https://trello.com/c/VXgx1w4r)
     // usar funções TechnologyService.exportTechnology(...), ExecutionService.exportExecutions(...), ExecutionService.exportConsolidatedExecutions(...)
     // usar lib exceljs para gerar o arquivo XLSX (https://www.npmjs.com/package/exceljs)
-    
+
     const ExcelJS = require("exceljs")
 
     const workbook = new Excel.Workbook()
@@ -22,6 +22,26 @@ export default class ReportService {
     workbook.modified = new Date()
     workbook.lastPrinted = new Date(2016, 9, 27)
 
-    return "teste.xlxs"
+    workbook.properties.date1904 = true
+
+    workbook.calcProperties.fullCalcOnLoad = true
+
+    workbook.views = [
+      {
+        x: 0,
+        y: 0,
+        width: 10000,
+        height: 20000,
+        firstSheet: 0,
+        activeTab: 1,
+        visibility: "visible",
+      },
+    ]
+
+    // write to a file
+    //const workbook = createAndFillWorkbook()
+    await workbook.xlsx.writeFile("teste.xlsx")
+
+    return "teste.xlsx"
   }
 }
