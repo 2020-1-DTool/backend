@@ -17,10 +17,10 @@ export default appRouter => {
     // instituição vem a partir do token da autenticação; usar código de acesso para saber ID da instituição
 
     const healthInstitutionService = Container.get(HealthInstitutionService)
-    //const institution = await healthInstitutionService.getInformations(req.auth.accessCode)
+    const institution = await healthInstitutionService.getInformations(req.auth.accessCode)
 
     const reportService = Container.get(ReportService)
-    const temporaryFile = await reportService.generateCompleteReport(1)
+    const temporaryFile = await reportService.generateCompleteReport(institution.id)
     res.download(temporaryFile)
   })
 

@@ -1,4 +1,6 @@
 import Excel from "exceljs"
+import { Container } from "typedi"
+import { TechnologyService } from "../services"
 
 export default class ReportService {
   /**
@@ -11,7 +13,6 @@ export default class ReportService {
     // TODO: implementar na task B03 (https://trello.com/c/VXgx1w4r)
     // usar funções TechnologyService.exportTechnology(...), ExecutionService.exportExecutions(...), ExecutionService.exportConsolidatedExecutions(...)
     // usar lib exceljs para gerar o arquivo XLSX (https://www.npmjs.com/package/exceljs)
-
     const ExcelJS = require("exceljs")
 
     const workbook = new Excel.Workbook()
@@ -37,6 +38,31 @@ export default class ReportService {
         visibility: "visible",
       },
     ]
+
+    const technologyService = Container.get(TechnologyService)
+    const technologies = await technologyService.listTechnologies(institutionID)
+
+    for (const tech of technologies) {
+      //console.log(tech.name)
+      const worksheet = workbook.addWorksheet(tech.name)
+      worksheet.columns = [
+        { header: " ", key: "activity", width: 10 },
+        { header: "Name", key: "name", width: 32 },
+        { header: "D.O.B.", key: "DOB", width: 10, outlineLevel: 1 },
+      ]
+      worksheet.columns.
+      const exportTech = technologyService.exportTechnology(tech.id)
+      //for(const activity of exportTech.activities) {
+        
+      //}
+    }
+
+    const worksheet = workbook.addWorksheet("My Sheet")
+
+    
+
+    //worksheet.addRow({ name: "John Doe", dob: new Date(1970, 1, 1) })
+    //worksheet.addRow({ name: "Jane Doe", dob: new Date(1965, 1, 7) })
 
     // write to a file
     //const workbook = createAndFillWorkbook()
