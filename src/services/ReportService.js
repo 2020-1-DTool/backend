@@ -46,15 +46,23 @@ export default class ReportService {
       //console.log(tech.name)
       const worksheet = workbook.addWorksheet(tech.name)
       worksheet.columns = [
-        { header: " ", key: "activity", width: 10 },
-        { header: "Name", key: "name", width: 32 },
-        { header: "D.O.B.", key: "DOB", width: 10, outlineLevel: 1 },
+        { header: " ", key: "activity", width: 50 },
       ]
-      worksheet.columns.
-      const exportTech = technologyService.exportTechnology(tech.id)
-      //for(const activity of exportTech.activities) {
+      
+      const exportTech = await technologyService.exportTechnology(tech.id)
+
+      for(const role of exportTech.roles) {
+        worksheet.columns = worksheet.columns.concat([
+          { header: role.name+"\n["+role.shortName+"]", key: role.shortName, width: 50, outlineLevel: 1 },
+        ])
+      }
+
+      for(const activity of exportTech.activities) {
+        worksheet.addRow({ activity: activity.name+"["+activity.shortName+"]"})
+        //Como vou adicionar a exportTech.matrix sem quebrar um por um ao adicionar? tem como adicionar direto?
         
-      //}
+      }
+
     }
 
     const worksheet = workbook.addWorksheet("My Sheet")
