@@ -43,37 +43,37 @@ export default class ReportService {
     const technologies = await technologyService.listTechnologies(institutionID)
 
     for (const tech of technologies) {
-      //console.log(tech.name)
-      const worksheet = workbook.addWorksheet(tech.name)
-      worksheet.columns = [
+
+      //Adiciona sheet "TECH - Definição"
+      const definicao = workbook.addWorksheet(tech.name + " - Definição")
+      definicao.columns = [
         { header: " ", key: "activity", width: 50 },
       ]
       
       const exportTech = await technologyService.exportTechnology(tech.id)
 
-      for(const role of exportTech.roles) {
-        worksheet.columns = worksheet.columns.concat([
-          { header: role.name+"\n["+role.shortName+"]", key: role.shortName, width: 50, outlineLevel: 1 },
+      for (let i = 0; i < exportTech.roles.length; i += 1) {
+        const { name, shortName } = exportTech.roles[i]
+        const role = shortName ? `${name} [${shortName}]` : name
+        definicao.columns = definicao.columns.concat([
+          { header: role, width: 50, outlineLevel: 1 },
         ])
       }
 
-      for(const activity of exportTech.activities) {
-        worksheet.addRow({ activity: activity.name+"["+activity.shortName+"]"})
-        //Como vou adicionar a exportTech.matrix sem quebrar um por um ao adicionar? tem como adicionar direto?
-        
+      for (let i = 0; i < exportTech.activities.length; i += 1) {
+        const { name, shortName } = exportTech.activities[i]
+        const activity = shortName ? `${name} [${shortName}]` : name
+        definicao.addRow([activity, ...exportTech.matrix[i]])
       }
+
+      //Adiciona sheet "TECH - Execuções"
+      const execucoes = workbook.addWorksheet(tech.name + " - Execuções")
+
+      //Adiciona sheet "TECH - Consolidado"
+      const consolidado = workbook.addWorksheet(tech.name + " - Consolidado")
 
     }
 
-    const worksheet = workbook.addWorksheet("My Sheet")
-
-    
-
-    //worksheet.addRow({ name: "John Doe", dob: new Date(1970, 1, 1) })
-    //worksheet.addRow({ name: "Jane Doe", dob: new Date(1965, 1, 7) })
-
-    // write to a file
-    //const workbook = createAndFillWorkbook()
     await workbook.xlsx.writeFile("teste.xlsx")
 
     return "teste.xlsx"
