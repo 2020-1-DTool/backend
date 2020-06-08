@@ -48,14 +48,6 @@ export default class TechnologyService {
    * @property {(string | null)[]} matrix Matriz com a definição de quais ocupações executam quais atividades, ordenada de acordo com o array em `activities`.
    */
   async exportTechnology(technologyID) {
-    // TODO: implementar na task B02 (https://trello.com/c/84Ukf1dM)
-
-    /*const technologyTable = await TechnologyDAO.findByPk(technologyID)
-
-    if (!technologyTable){
-      return null;
-    }*/
-
     const results = await TechnologyDAO.findByPk(technologyID, {
       include: [
         {
@@ -66,9 +58,9 @@ export default class TechnologyService {
     })
 
     const maxIDRole = Math.max(
-      results.activities.map(activity => {
+      ...results.activities.map(activity => {
         return Math.max(
-          activity.roles.map(role => {
+          ...activity.roles.map(role => {
             return role.id
           })
         )
@@ -76,14 +68,17 @@ export default class TechnologyService {
     )
 
     const maxIDActivity = Math.max(
-      results.activities.map(activity => {
+      ...results.activities.map(activity => {
         return activity.id
       })
     )
 
+    console.log("maxIDActivity: "+maxIDActivity)
+    console.log("maxIDRole: "+maxIDRole)
+
     const grid = new Array(maxIDActivity)
     for (let i = 0; i < grid.length; i += 1) {
-      grid[i] = new Array(maxIDRole).fill("")
+      grid[i] = new Array(maxIDRole).fill(null)
     }
 
     const arRole = new Array(maxIDRole)
@@ -96,18 +91,39 @@ export default class TechnologyService {
       yValue = activity.id
       arActiv[yValue - 1] = {
         name: activity.name,
-        shortName: activity.short_name,
+        shortName: activity.shortName,
       }
       for (const role of activity.roles) {
         xValue = role.id
         arRole[xValue - 1] = {
           name: role.name,
-          shortName: role.short_name,
+          shortName: role.shortName,
         }
         grid[yValue - 1][xValue - 1] = "x"
       }
     }
-
+    let i = 0
+    while (i < arActiv.length){
+      if(arActiv[i] == null){
+        arActiv.splice(i,1);
+        grid.splice(i,1);
+      }
+      else{
+        i +=1;
+      }
+    }
+    i = 0;
+    while (i < arRole.length){
+      if(arRole[i] == null){
+        arRole.splice(i,1);
+        for(let j = 0; j < grid.length; j +=1){
+          grid[j].splice(i,1);
+        }
+      }
+      else{
+        i +=1;
+      }
+    }
     // exemplo de retorno
     return {
       technologyName: results.name, //technologyTable.name,
