@@ -1,6 +1,6 @@
 import Sequelize from "sequelize"
 import config from "../config"
-import { ExecutionDAO, RoleActivityDAO, ActivityDAO, RoleDAO } from "../models"
+import { ExecutionDAO, RoleActivityDAO } from "../models"
 
 export default class ExecutionService {
   /**
@@ -24,8 +24,17 @@ export default class ExecutionService {
    * Essa função atualiza as durações mínima, mediana e máxima de todos os pares
    * atividade x ocupação, assim como o timestamp da última consolidação.
    */
-  async updateConsolidatedReport() {
-    // TODO: implementar (https://trello.com/c/HiBdKv5z)
+  async updateConsolidatedReport(consolidatedReports) {
+
+    for (const report of consolidatedReports) {
+      RoleActivityDAO.update( {
+        minimum: report.minimumDuration,
+        median: report.medianDuration,
+        maximum: report.maximumDuration,
+        lastUpdate: (new Date()).toISOString(),
+      },
+      { where : { role_id : report.roleID, activity_id : report.activityID}})
+    }
   }
 
   /**
@@ -62,9 +71,6 @@ export default class ExecutionService {
    * @property {string} lastUpdate Data/hora da última atualização dos dados consolidados (ISO 8601).
    */ 
   async exportConsolidatedExecutions(technologyID) {
-    // TODO: implementar (https://trello.com/c/HiBdKv5z)
-
-    console.log('Entrou com esse id:' + technologyID)
 
     const sequelize = new Sequelize(config.databaseURL, {
       dialect: "postgres",
@@ -84,16 +90,16 @@ export default class ExecutionService {
         replacements: [technologyID],
       }
     )
-        
+    
     return rawExecutionsData[0].map(rawResults => {
       return {
         activityID: rawResults.activity_id,
         activity: rawResults.activity,
         roleID: rawResults.role_id,
         role: rawResults.role,
-        minimumDuration: rawResults.minimum,
-        medianDuration: rawResults.median,
-        maximumDuration: rawResults.maximum,
+        minimumDuration: (rawResults.minimum / 60).toFixed(2),
+        medianDuration: (rawResults.median / 60).toFixed(2),
+        maximumDuration: (rawResults.maximum / 60).toFixed(2),
       }
     })
   }

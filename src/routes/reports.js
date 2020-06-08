@@ -8,11 +8,19 @@ export default appRouter => {
 
   // relatório simples (para gráficos do app)
   router.get("/simple", authService.middlewares.authenticated, async (req, res) => {
-    // TODO implementar (https://trello.com/c/HiBdKv5z)
-    // usar função ExecutionService.exportConsolidatedExecutions(...)
+
     const executionService = Container.get(ExecutionService)
     const reportSimple = await executionService.exportConsolidatedExecutions(req.body.technology)
-    console.log(reportSimple)
+
+    if (Object.keys(reportSimple).length === 0) {
+      res.status(404).json({
+        code: "not_found/no_data_found",
+        message: "There is no metrics related to this technology ID",
+      })
+      return
+    }
+
+    res.status(200).json(reportSimple)
   })
 
   // relatório completo (para gestores, XLSX)
