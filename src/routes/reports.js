@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { Container } from "typedi"
-import { Auth, HealthInstitutionService } from "../services"
+import { Auth, HealthInstitutionService, ExecutionService } from "../services"
 
 export default appRouter => {
   const router = Router() // /reports
@@ -10,6 +10,9 @@ export default appRouter => {
   router.get("/simple", authService.middlewares.authenticated, async (req, res) => {
     // TODO implementar (https://trello.com/c/HiBdKv5z)
     // usar função ExecutionService.exportConsolidatedExecutions(...)
+    const executionService = Container.get(ExecutionService)
+    const reportSimple = await executionService.exportConsolidatedExecutions(req.body.technology)
+    console.log(reportSimple)
   })
 
   // relatório completo (para gestores, XLSX)

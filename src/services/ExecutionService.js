@@ -1,4 +1,6 @@
-import { ExecutionDAO } from "../models"
+import Sequelize from "sequelize"
+import config from "../config"
+import { ExecutionDAO, RoleActivityDAO, ActivityDAO, RoleDAO } from "../models"
 
 export default class ExecutionService {
   /**
@@ -58,23 +60,42 @@ export default class ExecutionService {
    * @property {number} medianDuration Mediana das durações das execuções, em minutos.
    * @property {number} maximumDuration Duração máxima das execuções, em minutos.
    * @property {string} lastUpdate Data/hora da última atualização dos dados consolidados (ISO 8601).
-   */
+   */ 
   async exportConsolidatedExecutions(technologyID) {
     // TODO: implementar (https://trello.com/c/HiBdKv5z)
 
-    // exemplo de retorno
-    return [
-      {
-        activityID: 1,
-        activity: "Cirurgia",
-        roleID: 2,
-        role: "Anestesista",
-        minimumDuration: 37 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        medianDuration: 72 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        maximumDuration: 129 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        lastUpdate: "2020-06-03T12:40:32-0300", // ISO 8601
+    console.log('Entrou com esse id:' + technologyID)
+
+    const sequelize = new Sequelize(config.databaseURL, {
+      dialect: "postgres",
+      define: {
+        timestamps: false,
+        underscored: true,
       },
-    ]
+    })
+
+    const rawExecutionsData = await sequelize.query(
+     `SELECT activity_id, activities.name as activity, role_id, roles.name as role, minimum, median, maximum
+      FROM role_activities
+      INNER JOIN activities ON role_activities.activity_id = activities.id
+      INNER JOIN roles ON role_activities.role_id = roles.id
+      WHERE activities.technology_id = ?;`,
+      {
+        replacements: [technologyID],
+      }
+    )
+        
+    return rawExecutionsData[0].map(rawResults => {
+      return {
+        activityID: rawResults.activity_id,
+        activity: rawResults.activity,
+        roleID: rawResults.role_id,
+        role: rawResults.role,
+        minimumDuration: rawResults.minimum,
+        medianDuration: rawResults.median,
+        maximumDuration: rawResults.maximum,
+      }
+    })
   }
 
   /**
