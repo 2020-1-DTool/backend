@@ -1,6 +1,6 @@
 import Excel from "exceljs"
 import { Container } from "typedi"
-import { TechnologyService } from "../services"
+import { TechnologyService, ExecutionService } from "../services"
 
 export default class ReportService {
   /**
@@ -10,23 +10,20 @@ export default class ReportService {
    * @returns {Promise<string>} Nome do arquivo XLSX temporário.
    */
   async generateCompleteReport(institutionID) {
-    // TODO: implementar na task B03 (https://trello.com/c/VXgx1w4r)
-    // usar funções TechnologyService.exportTechnology(...), ExecutionService.exportExecutions(...), ExecutionService.exportConsolidatedExecutions(...)
-    // usar lib exceljs para gerar o arquivo XLSX (https://www.npmjs.com/package/exceljs)
+
     const ExcelJS = require("exceljs")
 
+    //Cria arquivo e adiciona algumas propriedades
     const workbook = new Excel.Workbook()
-
     workbook.creator = "Me"
     workbook.lastModifiedBy = "Her"
     workbook.created = new Date(1985, 8, 30)
     workbook.modified = new Date()
     workbook.lastPrinted = new Date(2016, 9, 27)
-
     workbook.properties.date1904 = true
-
+    workbook.properties.defaultRowHeight = 31.5
+    workbook.properties.defaultColWidth = 17.14
     workbook.calcProperties.fullCalcOnLoad = true
-
     workbook.views = [
       {
         x: 0,
@@ -39,43 +36,81 @@ export default class ReportService {
       },
     ]
 
+    //Cria serviços que serão usados
     const technologyService = Container.get(TechnologyService)
-    const technologies = await technologyService.listTechnologies(institutionID)
+    const executionService = Container.get(ExecutionService)
 
+    //Obtém as tecnologias da instituicão e para cada uma delas adiciona três abas
+    const technologies = await technologyService.listTechnologies(institutionID)
     for (const tech of technologies) {
 
-      //Adiciona sheet "TECH - Definição"
-      const definicao = workbook.addWorksheet(tech.name + " - Definição")
-      definicao.columns = [
-        { header: " ", key: "activity", width: 50 },
-      ]
-      
-      const exportTech = await technologyService.exportTechnology(tech.id)
+      //Adiciona aba "TECH - Definição"
+      const definitions = workbook.addWorksheet(tech.name + " - Definição")
+      const exportedTechnologies = await technologyService.exportTechnology(tech.id)
 
-      for (let i = 0; i < exportTech.roles.length; i += 1) {
-        const { name, shortName } = exportTech.roles[i]
+      definitions.columns = [{ header: " ", key: "activity", width: 50 }]
+
+      for (let i = 0; i < exportedTechnologies.roles.length; i += 1) {
+        const { name, shortName } = exportedTechnologies.roles[i]
         const role = shortName ? `${name} [${shortName}]` : name
-        definicao.columns = definicao.columns.concat([
-          { header: role, width: 50, outlineLevel: 1 },
-        ])
+        definitions.columns = definitions.columns.concat([{ header: role, width: 50, outlineLevel: 1 }])
       }
 
-      for (let i = 0; i < exportTech.activities.length; i += 1) {
-        const { name, shortName } = exportTech.activities[i]
+      for (let i = 0; i < exportedTechnologies.activities.length; i += 1) {
+        const { name, shortName } = exportedTechnologies.activities[i]
         const activity = shortName ? `${name} [${shortName}]` : name
-        definicao.addRow([activity, ...exportTech.matrix[i]])
+        definitions.addRow([activity, ...exportedTechnologies.matrix[i]])
       }
 
-      //Adiciona sheet "TECH - Execuções"
-      const execucoes = workbook.addWorksheet(tech.name + " - Execuções")
+      //Adiciona aba "TECH - Execuções"
+      const executions = workbook.addWorksheet(tech.name + " - Execuções")
+      executions.columns = [
+        { header: "Atividade", key: "activity", width: 50 },
+        { header: "Ocupação", key: "role", width: 50 },
+        { header: "Início", key: "timestamp", width: 50 },
+        { header: "Duração(minutos)", key: "duration", width: 50 },
+        { header: "Dispositivo", key: "deviceToken", width: 50 },
+      ]
 
-      //Adiciona sheet "TECH - Consolidado"
-      const consolidado = workbook.addWorksheet(tech.name + " - Consolidado")
+      const exportExecutions = await executionService.exportExecutions(tech.id)
+
+      exportExecutions.forEach(execution => {
+        executions.addRow({
+          activity: execution.activity,
+          role: execution.role,
+          timestamp: execution.timestamp,
+          duration: execution.duration,
+          deviceToken: execution.deviceToken,
+        })
+      })
+
+      //Adiciona aba "TECH - Consolidado"
+      const condolidatedExecutions = workbook.addWorksheet(tech.name + " - Consolidado")
+      condolidatedExecutions.columns = [
+        { header: "Atividade", key: "activity", width: 50 },
+        { header: "Ocupação", key: "role", width: 50 },
+        { header: "Mínimo(minutos)", key: "minimumDuration", width: 50 },
+        { header: "Mediana(minutos)", key: "medianDuration", width: 50 },
+        { header: "Máximo(minutos)", key: "maximumDuration", width: 50 },
+      ]
+
+      const exportConsolidatedExecutions = await executionService.exportConsolidatedExecutions(tech.id)
+
+      exportConsolidatedExecutions.forEach(consolidatedExecution => {
+        condolidatedExecutions.addRow({
+          activity: consolidatedExecution.activity,
+          role: consolidatedExecution.role,
+          minimumDuration: consolidatedExecution.minimumDuration,
+          medianDuration: consolidatedExecution.medianDuration,
+          maximumDuration: consolidatedExecution.maximumDuration,
+        })
+      });
 
     }
 
-    await workbook.xlsx.writeFile("teste.xlsx")
+    //Exporta arquivo
+    await workbook.xlsx.writeFile("temp.xlsx")
 
-    return "teste.xlsx"
+    return "temp.xlsx"
   }
 }

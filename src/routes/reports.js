@@ -22,6 +22,8 @@ export default appRouter => {
     const reportService = Container.get(ReportService)
     const temporaryFile = await reportService.generateCompleteReport(institution.id)
     res.download(temporaryFile)
+    //Deletar temporaryFile? Se tiver como, podemos usar nome de arquivos diferentes no ReportService, assim evitando conflitos caso sejam 
+    //realizadas múltiplas exportações ao mesmo tempo!
   })
 
   appRouter.use("/reports", router)
