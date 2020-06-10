@@ -9,9 +9,25 @@ export default appRouter => {
   // relatório simples (para gráficos do app)
   router.get("/simple", authService.middlewares.authenticated, async (req, res) => {
 
+    if (req.body.technology == null || req.body.professional == null) {
+      res.status(400).json({
+        code: "bad_request/missing_fields",
+        message: "Either 'technology' and 'professional' values are required.",
+      })
+      return
+    }
+
+    if (typeof req.body.technology !== 'number' || typeof req.body.professional !== 'number') {
+      res.status(400).json({
+        code: "bad_request/missing_fields",
+        message: "Either 'technology' and 'professional' values should be numbers.",
+      })
+      return
+    }
+
     const executionService = Container.get(ExecutionService)
     const reportSimple = await executionService.exportConsolidatedExecutions(req.body.technology)
-
+    
     if (Object.keys(reportSimple).length === 0) {
       res.status(404).json({
         code: "not_found/no_data_found",

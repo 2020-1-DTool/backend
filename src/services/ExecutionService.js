@@ -24,16 +24,39 @@ export default class ExecutionService {
    * Essa função atualiza as durações mínima, mediana e máxima de todos os pares
    * atividade x ocupação, assim como o timestamp da última consolidação.
    */
-  async updateConsolidatedReport(consolidatedReports) {
-
-    for (const report of consolidatedReports) {
-      RoleActivityDAO.update( {
-        minimum: report.minimumDuration,
-        median: report.medianDuration,
-        maximum: report.maximumDuration,
-        lastUpdate: (new Date()).toISOString(),
+  async updateConsolidatedReport() {
+    const sequelize = new Sequelize(config.databaseURL, {
+      dialect: "postgres",
+      define: {
+        timestamps: false,
+        underscored: true,
       },
-      { where : { role_id : report.roleID, activity_id : report.activityID}})
+    })
+
+    const allRoleActivityData = await sequelize.query(
+      `SELECT *
+       FROM role_activities;`
+    )
+
+    for (const roleActivity of allRoleActivityData[0]) {
+    
+      const minMaxMedian = sequelize.query(
+        `SELECT MIN(duration), MAX(duration)
+        FROM executions
+        WHERE role_id = ? AND activity_id = ?;`,
+         {
+           replacements: [roleActivity.role_id, roleActivity.activity_id],
+         }
+       )
+
+        RoleActivityDAO.update({
+          minimum: minMaxMedian.min,
+          // median: minMaxMedian.medianDuration,
+          maximum: minMaxMedian.max,
+          lastUpdate: (new Date()).toISOString(),
+        },
+        { where : { role_id: roleActivity.role_id, activity_id: roleActivity.activity_id}})
+      
     }
   }
 
@@ -81,7 +104,7 @@ export default class ExecutionService {
     })
 
     const rawExecutionsData = await sequelize.query(
-     `SELECT activity_id, activities.name as activity, role_id, roles.name as role, minimum, median, maximum
+     `SELECT activity_id, activities.name as activity, role_id, roles.name as role, minimum/60 as minimum, median/60 as median, maximum/60 as maximum, last_update
       FROM role_activities
       INNER JOIN activities ON role_activities.activity_id = activities.id
       INNER JOIN roles ON role_activities.role_id = roles.id
@@ -97,9 +120,10 @@ export default class ExecutionService {
         activity: rawResults.activity,
         roleID: rawResults.role_id,
         role: rawResults.role,
-        minimumDuration: (rawResults.minimum / 60).toFixed(2),
-        medianDuration: (rawResults.median / 60).toFixed(2),
-        maximumDuration: (rawResults.maximum / 60).toFixed(2),
+        minimumDuration: rawResults.minimum,
+        medianDuration: rawResults.median,
+        maximumDuration: rawResults.maximum,
+        lastUpdate: rawResults.last_update,
       }
     })
   }
