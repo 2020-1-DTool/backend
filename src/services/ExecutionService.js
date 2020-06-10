@@ -1,5 +1,3 @@
-import Sequelize from "sequelize"
-import config from "../config"
 import { ExecutionDAO, RoleActivityDAO } from "../models"
 
 export default class ExecutionService {
@@ -25,39 +23,8 @@ export default class ExecutionService {
    * atividade x ocupação, assim como o timestamp da última consolidação.
    */
   async updateConsolidatedReport() {
-    const sequelize = new Sequelize(config.databaseURL, {
-      dialect: "postgres",
-      define: {
-        timestamps: false,
-        underscored: true,
-      },
-    })
-
-    const allRoleActivityData = await sequelize.query(
-      `SELECT *
-       FROM role_activities;`
-    )
-
-    for (const roleActivity of allRoleActivityData[0]) {
-    
-      const minMaxMedian = sequelize.query(
-        `SELECT MIN(duration), MAX(duration)
-        FROM executions
-        WHERE role_id = ? AND activity_id = ?;`,
-         {
-           replacements: [roleActivity.role_id, roleActivity.activity_id],
-         }
-       )
-
-        RoleActivityDAO.update({
-          minimum: minMaxMedian.min,
-          // median: minMaxMedian.medianDuration,
-          maximum: minMaxMedian.max,
-          lastUpdate: (new Date()).toISOString(),
-        },
-        { where : { role_id: roleActivity.role_id, activity_id: roleActivity.activity_id}})
-      
-    }
+    const roleActivityDAO = new RoleActivityDAO()
+    roleActivityDAO.updateRoleActivityMetrics()
   }
 
   /**
@@ -95,25 +62,9 @@ export default class ExecutionService {
    */ 
   async exportConsolidatedExecutions(technologyID) {
 
-    const sequelize = new Sequelize(config.databaseURL, {
-      dialect: "postgres",
-      define: {
-        timestamps: false,
-        underscored: true,
-      },
-    })
+      const roleActivityDAO = new RoleActivityDAO()
+      const rawExecutionsData = await roleActivityDAO.returnAlgumaCoisa(technologyID)
 
-    const rawExecutionsData = await sequelize.query(
-     `SELECT activity_id, activities.name as activity, role_id, roles.name as role, minimum/60 as minimum, median/60 as median, maximum/60 as maximum, last_update
-      FROM role_activities
-      INNER JOIN activities ON role_activities.activity_id = activities.id
-      INNER JOIN roles ON role_activities.role_id = roles.id
-      WHERE activities.technology_id = ?;`,
-      {
-        replacements: [technologyID],
-      }
-    )
-    
     return rawExecutionsData[0].map(rawResults => {
       return {
         activityID: rawResults.activity_id,
