@@ -3,7 +3,7 @@ import { ExecutionDAO } from "."
 
 export default class RoleActivityDAO extends Model {
   
-  async updateRoleActivityMetrics() {
+  static async updateRoleActivityMetrics() {
     const allRoleActivityData = await RoleActivityDAO.findAll()
 
     for (const roleActivity of allRoleActivityData) {
@@ -30,7 +30,7 @@ export default class RoleActivityDAO extends Model {
     }
   }
 
-  async returnAlgumaCoisa(technologyID) {
+  static async retrieveRoleActivityMetrics(technologyID) {
     return this.sequelize.query(
       `SELECT activity_id, activities.name as activity, role_id, roles.name as role, minimum/60 as minimum, median/60 as median, maximum/60 as maximum, last_update
        FROM role_activities

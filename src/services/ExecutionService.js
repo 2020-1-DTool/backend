@@ -23,8 +23,7 @@ export default class ExecutionService {
    * atividade x ocupação, assim como o timestamp da última consolidação.
    */
   async updateConsolidatedReport() {
-    const roleActivityDAO = new RoleActivityDAO()
-    roleActivityDAO.updateRoleActivityMetrics()
+    RoleActivityDAO.updateRoleActivityMetrics()
   }
 
   /**
@@ -61,9 +60,7 @@ export default class ExecutionService {
    * @property {string} lastUpdate Data/hora da última atualização dos dados consolidados (ISO 8601).
    */ 
   async exportConsolidatedExecutions(technologyID) {
-
-      const roleActivityDAO = new RoleActivityDAO()
-      const rawExecutionsData = await roleActivityDAO.returnAlgumaCoisa(technologyID)
+    const rawExecutionsData = await RoleActivityDAO.retrieveRoleActivityMetrics(technologyID)
 
     return rawExecutionsData[0].map(rawResults => {
       return {
