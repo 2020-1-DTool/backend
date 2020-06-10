@@ -73,9 +73,6 @@ export default class TechnologyService {
       })
     )
 
-    console.log("maxIDActivity: "+maxIDActivity)
-    console.log("maxIDRole: "+maxIDRole)
-
     const grid = new Array(maxIDActivity)
     for (let i = 0; i < grid.length; i += 1) {
       grid[i] = new Array(maxIDRole).fill(null)
@@ -124,9 +121,9 @@ export default class TechnologyService {
         i +=1;
       }
     }
-    // exemplo de retorno
+
     return {
-      technologyName: results.name, //technologyTable.name,
+      technologyName: results.name,
       activities: arActiv,
       roles: arRole,
       matrix: grid,
