@@ -1,4 +1,4 @@
-import { HealthInstitutionDAO, TechnologyDAO, ActivityDAO } from "../models"
+import { HealthInstitutionDAO, TechnologyDAO, ActivityDAO, RoleDAO } from "../models"
 
 export default class TechnologyService {
   /**
@@ -35,12 +35,12 @@ export default class TechnologyService {
 
   /**
    * Exporta a definição de uma tecnologia (matriz atividades x ocupações).
-   * 
+   *
    * @param {number} technologyID ID da tecnologia cuja definição deve ser exportada.
    * @returns {TechnologyDefinition} Objeto com a definição de uma tecnologia.
-   * 
+   *
    * ----
-   * 
+   *
    * Objeto com a definição de uma tecnologia (atividades, ocupações e matriz atividade x ocupação).
    * @typedef {Object} TechnologyDefinition
    * @property {{ name: string; shortName: string }[]} activities Lista de atividades, com nome completo e nome curto (se cadastrado), ordenadas pelo nome.
@@ -48,25 +48,85 @@ export default class TechnologyService {
    * @property {(string | null)[]} matrix Matriz com a definição de quais ocupações executam quais atividades, ordenada de acordo com o array em `activities`.
    */
   async exportTechnology(technologyID) {
-    // TODO: implementar na task B02 (https://trello.com/c/84Ukf1dM)
+    const results = await TechnologyDAO.findByPk(technologyID, {
+      include: [
+        {
+          model: ActivityDAO,
+          include: [RoleDAO],
+        },
+      ],
+    })
 
-    // exemplo de retorno
+    const maxIDRole = Math.max(
+      ...results.activities.map(activity => {
+        return Math.max(
+          ...activity.roles.map(role => {
+            return role.id
+          })
+        )
+      })
+    )
+
+    const maxIDActivity = Math.max(
+      ...results.activities.map(activity => {
+        return activity.id
+      })
+    )
+
+    const grid = new Array(maxIDActivity)
+    for (let i = 0; i < grid.length; i += 1) {
+      grid[i] = new Array(maxIDRole).fill(null)
+    }
+
+    const arRole = new Array(maxIDRole)
+
+    const arActiv = new Array(maxIDActivity)
+
+    let yValue
+    let xValue
+    for (const activity of results.activities) {
+      yValue = activity.id
+      arActiv[yValue - 1] = {
+        name: activity.name,
+        shortName: activity.shortName,
+      }
+      for (const role of activity.roles) {
+        xValue = role.id
+        arRole[xValue - 1] = {
+          name: role.name,
+          shortName: role.shortName,
+        }
+        grid[yValue - 1][xValue - 1] = "x"
+      }
+    }
+    let i = 0
+    while (i < arActiv.length){
+      if(arActiv[i] == null){
+        arActiv.splice(i,1);
+        grid.splice(i,1);
+      }
+      else{
+        i +=1;
+      }
+    }
+    i = 0;
+    while (i < arRole.length){
+      if(arRole[i] == null){
+        arRole.splice(i,1);
+        for(let j = 0; j < grid.length; j +=1){
+          grid[j].splice(i,1);
+        }
+      }
+      else{
+        i +=1;
+      }
+    }
+
     return {
-      activities: [
-        {
-          name: "Avaliação da recepção do paciente",
-          shortName: "Av. recepção pac."
-        }
-      ],
-      roles: [
-        {
-          name: "Assistente do cirurgião 1",
-          shortName: "Assist. cirurg. 1"
-        }
-      ],
-      matrix: [
-        [null, null, "X", null, "X", "X"]
-      ]
+      technologyName: results.name,
+      activities: arActiv,
+      roles: arRole,
+      matrix: grid,
     }
   }
 }
