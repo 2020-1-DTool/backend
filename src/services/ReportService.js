@@ -1,6 +1,7 @@
 import Excel from "exceljs"
 import { Container } from "typedi"
-import { TechnologyService, ExecutionService } from "../services"
+import TechnologyService from "./TechnologyService"
+import ExecutionService from "./ExecutionService"
 
 export default class ReportService {
   /**
@@ -11,19 +12,11 @@ export default class ReportService {
    */
   async generateCompleteReport(institutionID) {
 
-    const ExcelJS = require("exceljs")
-
     //Cria arquivo e adiciona algumas propriedades
     const workbook = new Excel.Workbook()
-    workbook.creator = "Me"
-    workbook.lastModifiedBy = "Her"
-    workbook.created = new Date(1985, 8, 30)
-    workbook.modified = new Date()
-    workbook.lastPrinted = new Date(2016, 9, 27)
-    workbook.properties.date1904 = true
-    workbook.properties.defaultRowHeight = 31.5
-    workbook.properties.defaultColWidth = 17.14
-    workbook.calcProperties.fullCalcOnLoad = true
+    workbook.creator = "dTool - AGES, PUCRS"
+    workbook.lastModifiedBy = "dTool - AGES, PUCRS"
+    workbook.created = new Date()
     workbook.views = [
       {
         x: 0,
@@ -68,49 +61,33 @@ export default class ReportService {
         { header: "Atividade", key: "activity", width: 50 },
         { header: "Ocupação", key: "role", width: 50 },
         { header: "Início", key: "timestamp", width: 50 },
-        { header: "Duração(minutos)", key: "duration", width: 50 },
+        { header: "Duração (minutos)", key: "duration", width: 50 },
         { header: "Dispositivo", key: "deviceToken", width: 50 },
       ]
 
       const exportExecutions = await executionService.exportExecutions(tech.id)
 
-      exportExecutions.forEach(execution => {
-        executions.addRow({
-          activity: execution.activity,
-          role: execution.role,
-          timestamp: execution.timestamp,
-          duration: execution.duration,
-          deviceToken: execution.deviceToken,
-        })
-      })
+      executions.addRows(exportExecutions)
 
       //Adiciona aba "TECH - Consolidado"
-      const condolidatedExecutions = workbook.addWorksheet(tech.name + " - Consolidado")
-      condolidatedExecutions.columns = [
+      const consolidatedExecutions = workbook.addWorksheet(tech.name + " - Consolidado")
+      consolidatedExecutions.columns = [
         { header: "Atividade", key: "activity", width: 50 },
         { header: "Ocupação", key: "role", width: 50 },
-        { header: "Mínimo(minutos)", key: "minimumDuration", width: 50 },
-        { header: "Mediana(minutos)", key: "medianDuration", width: 50 },
-        { header: "Máximo(minutos)", key: "maximumDuration", width: 50 },
+        { header: "Mínimo (minutos)", key: "minimumDuration", width: 50 },
+        { header: "Mediana (minutos)", key: "medianDuration", width: 50 },
+        { header: "Máximo (minutos)", key: "maximumDuration", width: 50 },
       ]
 
       const exportConsolidatedExecutions = await executionService.exportConsolidatedExecutions(tech.id)
 
-      exportConsolidatedExecutions.forEach(consolidatedExecution => {
-        condolidatedExecutions.addRow({
-          activity: consolidatedExecution.activity,
-          role: consolidatedExecution.role,
-          minimumDuration: consolidatedExecution.minimumDuration,
-          medianDuration: consolidatedExecution.medianDuration,
-          maximumDuration: consolidatedExecution.maximumDuration,
-        })
-      });
+      consolidatedExecutions.addRows(exportConsolidatedExecutions)
 
     }
 
     //Exporta arquivo
-    await workbook.xlsx.writeFile("temp.xlsx")
+    await workbook.xlsx.writeFile(institutionID + ".xlsx")
 
-    return "temp.xlsx"
+    return institutionID + ".xlsx"
   }
 }
