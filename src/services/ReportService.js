@@ -11,7 +11,6 @@ export default class ReportService {
    * @returns {Promise<string>} Nome do arquivo XLSX temporário.
    */
   async generateCompleteReport(institutionID) {
-
     // Cria arquivo e adiciona algumas propriedades
     const workbook = new Excel.Workbook()
     workbook.creator = "dTool - AGES, PUCRS"
@@ -36,17 +35,22 @@ export default class ReportService {
     // Obtém as tecnologias da instituicão e para cada uma delas adiciona três abas
     const technologies = await technologyService.listTechnologies(institutionID)
     for (const tech of technologies) {
-
       // Adiciona aba "TECH - Definição"
-      const definitions = workbook.addWorksheet(tech.name + " - Definição")
+      const definitions = workbook.addWorksheet(tech.name + " - Definição", {
+        properties: {
+          defaultColWidth: 20,
+          defaultRowHeight: 32,
+        },
+        views: [{ state: "frozen", xSplit: 1, ySplit: 1 }],
+      })
       const exportedTechnologies = await technologyService.exportTechnology(tech.id)
 
-      definitions.columns = [{ header: " ", key: "activity", width: 50 }]
+      definitions.columns = [{ header: " ", key: "activity"}]
 
       for (let i = 0; i < exportedTechnologies.roles.length; i += 1) {
         const { name, shortName } = exportedTechnologies.roles[i]
         const role = shortName ? `${name} [${shortName}]` : name
-        definitions.columns = definitions.columns.concat([{ header: role, width: 50, outlineLevel: 1 }])
+        definitions.columns = definitions.columns.concat([{ header: role, outlineLevel: 1, height: 32}])
       }
 
       for (let i = 0; i < exportedTechnologies.activities.length; i += 1) {
@@ -54,6 +58,40 @@ export default class ReportService {
         const activity = shortName ? `${name} [${shortName}]` : name
         definitions.addRow([activity, ...exportedTechnologies.matrix[i]])
       }
+
+      const firstRow = definitions.getRow(1)
+      firstRow.height = 48
+      firstRow.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+        wrapText: true,
+      }
+      firstRow.border = { bottom: { style: "thin" } }
+
+      const firstColumn = definitions.getColumn(1)
+      firstColumn.width = 30
+      firstColumn.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+        wrapText: true,
+      }
+      firstColumn.border = { right: { style: "thin" } }
+
+      definitions.eachRow(row => {
+
+        row.alignment = {
+          horizontal: "center",
+          vertical: "middle",
+          wrapText: true,
+        }
+
+        row.font = {
+          name: "Arial",
+          size: 10,
+          bold: false,
+        }
+
+      })
 
       // Adiciona aba "TECH - Execuções"
       const executions = workbook.addWorksheet(tech.name + " - Execuções")
@@ -67,7 +105,27 @@ export default class ReportService {
 
       const exportExecutions = await executionService.exportExecutions(tech.id)
 
+      const executionsFirstRow = executions.getRow(1)
+
+      executionsFirstRow.eachCell(row => {
+
+        row.alignment = {
+          horizontal: "center",
+          vertical: "middle",
+          wrapText: true,
+        }
+
+        row.font = {
+          name: "Arial",
+          size: 10,
+          bold: true,
+        }
+
+      })
+
       executions.addRows(exportExecutions)
+
+      
 
       // Adiciona aba "TECH - Consolidado"
       const consolidatedExecutions = workbook.addWorksheet(tech.name + " - Consolidado")
@@ -81,8 +139,25 @@ export default class ReportService {
 
       const exportConsolidatedExecutions = await executionService.exportConsolidatedExecutions(tech.id)
 
-      consolidatedExecutions.addRows(exportConsolidatedExecutions)
+      const consolidatedFirstRow = consolidatedExecutions.getRow(1)
 
+      consolidatedFirstRow.eachCell(row => {
+
+        row.alignment = {
+          horizontal: "center",
+          vertical: "middle",
+          wrapText: true,
+        }
+
+        row.font = {
+          name: "Arial",
+          size: 10,
+          bold: true,
+        }
+
+      })
+
+      consolidatedExecutions.addRows(exportConsolidatedExecutions)
     }
 
     // Exporta arquivo
