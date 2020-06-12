@@ -86,7 +86,7 @@ export default class ReportService {
     }
 
     //Exporta arquivo
-    await workbook.xlsx.writeFile(institutionID + ".xlsx")
+    await workbook.xlsx.writeFile(`${institutionID}.xlsx`)
 
     return institutionID + ".xlsx"
   }
