@@ -12,7 +12,7 @@ export default class ReportService {
    */
   async generateCompleteReport(institutionID) {
 
-    //Cria arquivo e adiciona algumas propriedades
+    // Cria arquivo e adiciona algumas propriedades
     const workbook = new Excel.Workbook()
     workbook.creator = "dTool - AGES, PUCRS"
     workbook.lastModifiedBy = "dTool - AGES, PUCRS"
