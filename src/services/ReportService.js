@@ -29,15 +29,15 @@ export default class ReportService {
       },
     ]
 
-    //Cria serviços que serão usados
+    // Cria serviços que serão usados
     const technologyService = Container.get(TechnologyService)
     const executionService = Container.get(ExecutionService)
 
-    //Obtém as tecnologias da instituicão e para cada uma delas adiciona três abas
+    // Obtém as tecnologias da instituicão e para cada uma delas adiciona três abas
     const technologies = await technologyService.listTechnologies(institutionID)
     for (const tech of technologies) {
 
-      //Adiciona aba "TECH - Definição"
+      // Adiciona aba "TECH - Definição"
       const definitions = workbook.addWorksheet(tech.name + " - Definição")
       const exportedTechnologies = await technologyService.exportTechnology(tech.id)
 
@@ -55,7 +55,7 @@ export default class ReportService {
         definitions.addRow([activity, ...exportedTechnologies.matrix[i]])
       }
 
-      //Adiciona aba "TECH - Execuções"
+      // Adiciona aba "TECH - Execuções"
       const executions = workbook.addWorksheet(tech.name + " - Execuções")
       executions.columns = [
         { header: "Atividade", key: "activity", width: 50 },
@@ -69,7 +69,7 @@ export default class ReportService {
 
       executions.addRows(exportExecutions)
 
-      //Adiciona aba "TECH - Consolidado"
+      // Adiciona aba "TECH - Consolidado"
       const consolidatedExecutions = workbook.addWorksheet(tech.name + " - Consolidado")
       consolidatedExecutions.columns = [
         { header: "Atividade", key: "activity", width: 50 },
@@ -85,7 +85,7 @@ export default class ReportService {
 
     }
 
-    //Exporta arquivo
+    // Exporta arquivo
     await workbook.xlsx.writeFile(`${institutionID}.xlsx`)
 
     return institutionID + ".xlsx"
