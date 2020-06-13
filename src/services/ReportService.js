@@ -16,17 +16,6 @@ export default class ReportService {
     workbook.creator = "dTool - AGES, PUCRS"
     workbook.lastModifiedBy = "dTool - AGES, PUCRS"
     workbook.created = new Date()
-    workbook.views = [
-      {
-        x: 0,
-        y: 0,
-        width: 10000,
-        height: 20000,
-        firstSheet: 0,
-        activeTab: 1,
-        visibility: "visible",
-      },
-    ]
 
     // Cria serviços que serão usados
     const technologyService = Container.get(TechnologyService)
@@ -36,7 +25,7 @@ export default class ReportService {
     const technologies = await technologyService.listTechnologies(institutionID)
     for (const tech of technologies) {
       // Adiciona aba "TECH - Definição"
-      const definitions = workbook.addWorksheet(tech.name + " - Definição", {
+      const definitions = workbook.addWorksheet(`${tech.name} - Definição`, {
         properties: {
           defaultColWidth: 20,
           defaultRowHeight: 32,
@@ -45,12 +34,12 @@ export default class ReportService {
       })
       const exportedTechnologies = await technologyService.exportTechnology(tech.id)
 
-      definitions.columns = [{ header: " ", key: "activity"}]
+      definitions.columns = [{ header: " ", key: "activity" }]
 
       for (let i = 0; i < exportedTechnologies.roles.length; i += 1) {
         const { name, shortName } = exportedTechnologies.roles[i]
         const role = shortName ? `${name} [${shortName}]` : name
-        definitions.columns = definitions.columns.concat([{ header: role, outlineLevel: 1, height: 32}])
+        definitions.columns = definitions.columns.concat([{ header: role, outlineLevel: 1, height: 32 }])
       }
 
       for (let i = 0; i < exportedTechnologies.activities.length; i += 1) {
@@ -58,6 +47,8 @@ export default class ReportService {
         const activity = shortName ? `${name} [${shortName}]` : name
         definitions.addRow([activity, ...exportedTechnologies.matrix[i]])
       }
+
+      definitions.getCell(1, 1).value = exportedTechnologies.technologyName
 
       const firstRow = definitions.getRow(1)
       firstRow.height = 48
@@ -78,6 +69,7 @@ export default class ReportService {
       firstColumn.border = { right: { style: "thin" } }
 
       definitions.eachRow(row => {
+        /* eslint-disable no-param-reassign */
 
         row.alignment = {
           horizontal: "center",
@@ -91,71 +83,72 @@ export default class ReportService {
           bold: false,
         }
 
+        /* eslint-enable no-param-reassign */
       })
 
       // Adiciona aba "TECH - Execuções"
-      const executions = workbook.addWorksheet(tech.name + " - Execuções")
+      const executions = workbook.addWorksheet(`${tech.name} - Execuções`, {
+        views: [{ state: "frozen", ySplit: 1 }],
+      })
       executions.columns = [
-        { header: "Atividade", key: "activity", width: 50 },
-        { header: "Ocupação", key: "role", width: 50 },
-        { header: "Início", key: "timestamp", width: 50 },
-        { header: "Duração (minutos)", key: "duration", width: 50 },
-        { header: "Dispositivo", key: "deviceToken", width: 50 },
+        { header: "Atividade", key: "activity", width: 56 },
+        { header: "Ocupação", key: "role", width: 56 },
+        { header: "Início", key: "timestamp", width: 25, style: { numFmt: "dd/MM/yyyy\\ hh:mm:ss.SSS" } },
+        { header: "Duração (minutos)", key: "duration", width: 25 },
+        { header: "Dispositivo", key: "deviceToken", width: 40, style: { alignment: { horizontal: "right" } } },
       ]
 
       const exportExecutions = await executionService.exportExecutions(tech.id)
 
       const executionsFirstRow = executions.getRow(1)
+      executionsFirstRow.height = 32
+      executionsFirstRow.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+        wrapText: true,
+      }
 
-      executionsFirstRow.eachCell(row => {
+      executionsFirstRow.font = {
+        name: "Arial",
+        size: 10,
+        bold: true,
+      }
 
-        row.alignment = {
-          horizontal: "center",
-          vertical: "middle",
-          wrapText: true,
-        }
-
-        row.font = {
-          name: "Arial",
-          size: 10,
-          bold: true,
-        }
-
-      })
-
-      executions.addRows(exportExecutions)
-
-      
+      executions.addRows(
+        exportExecutions.map(execution => {
+          return {
+            ...execution,
+            timestamp: new Date(execution.timestamp),
+          }
+        })
+      )
 
       // Adiciona aba "TECH - Consolidado"
-      const consolidatedExecutions = workbook.addWorksheet(tech.name + " - Consolidado")
+      const consolidatedExecutions = workbook.addWorksheet(`${tech.name} - Consolidado`, {
+        views: [{ state: "frozen", ySplit: 1 }],
+      })
       consolidatedExecutions.columns = [
-        { header: "Atividade", key: "activity", width: 50 },
-        { header: "Ocupação", key: "role", width: 50 },
-        { header: "Mínimo (minutos)", key: "minimumDuration", width: 50 },
-        { header: "Mediana (minutos)", key: "medianDuration", width: 50 },
-        { header: "Máximo (minutos)", key: "maximumDuration", width: 50 },
+        { header: "Atividade", key: "activity", width: 56 },
+        { header: "Ocupação", key: "role", width: 56 },
+        { header: "Mínimo (minutos)", key: "minimumDuration", width: 14 },
+        { header: "Mediana (minutos)", key: "medianDuration", width: 14 },
+        { header: "Máximo (minutos)", key: "maximumDuration", width: 14 },
       ]
 
       const exportConsolidatedExecutions = await executionService.exportConsolidatedExecutions(tech.id)
 
       const consolidatedFirstRow = consolidatedExecutions.getRow(1)
-
-      consolidatedFirstRow.eachCell(row => {
-
-        row.alignment = {
-          horizontal: "center",
-          vertical: "middle",
-          wrapText: true,
-        }
-
-        row.font = {
-          name: "Arial",
-          size: 10,
-          bold: true,
-        }
-
-      })
+      consolidatedFirstRow.height = 32
+      consolidatedFirstRow.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+        wrapText: true,
+      }
+      consolidatedFirstRow.font = {
+        name: "Arial",
+        size: 10,
+        bold: true,
+      }
 
       consolidatedExecutions.addRows(exportConsolidatedExecutions)
     }
@@ -163,6 +156,6 @@ export default class ReportService {
     // Exporta arquivo
     await workbook.xlsx.writeFile(`${institutionID}.xlsx`)
 
-    return institutionID + ".xlsx"
+    return `${institutionID}.xlsx`
   }
 }
