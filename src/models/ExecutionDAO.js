@@ -1,6 +1,19 @@
-import { Model, DataTypes } from "sequelize"
+import { Model, DataTypes, QueryTypes } from "sequelize"
 
-export default class ExecutionDAO extends Model {}
+export default class ExecutionDAO extends Model {
+  static async getExecutionsReport(technologyID){
+    return this.sequelize.query(`
+      select A.name as activity,R.name as role, E.timestamp as timestamp ,E.duration/ 60 as duration, E.device_token as "deviceToken"
+      from executions as E INNER JOIN role_activities as RA on E.role_id = RA.role_id AND E.activity_id = RA.activity_id
+      INNER JOIN roles as R on RA.role_id = R.id
+      INNER JOIN activities as A on RA.activity_id = A.id
+      WHERE A.technology_id = :tech_id
+      ORDER BY timestamp`,{
+        type: QueryTypes.SELECT,
+        replacements: {tech_id : technologyID},
+      })
+  }
+}
 
 export const setup = sequelize => {
   ExecutionDAO.init(
