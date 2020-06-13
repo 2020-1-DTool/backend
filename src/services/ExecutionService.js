@@ -1,4 +1,4 @@
-import { ExecutionDAO } from "../models"
+import { ExecutionDAO, RoleActivityDAO } from "../models"
 
 export default class ExecutionService {
   /**
@@ -23,7 +23,7 @@ export default class ExecutionService {
    * atividade x ocupação, assim como o timestamp da última consolidação.
    */
   async updateConsolidatedReport() {
-    // TODO: implementar (https://trello.com/c/HiBdKv5z)
+    RoleActivityDAO.updateRoleActivityMetrics()
   }
 
   /**
@@ -58,23 +58,22 @@ export default class ExecutionService {
    * @property {number} medianDuration Mediana das durações das execuções, em minutos.
    * @property {number} maximumDuration Duração máxima das execuções, em minutos.
    * @property {string} lastUpdate Data/hora da última atualização dos dados consolidados (ISO 8601).
-   */
+   */ 
   async exportConsolidatedExecutions(technologyID) {
-    // TODO: implementar (https://trello.com/c/HiBdKv5z)
+    const rawExecutionsData = await RoleActivityDAO.retrieveRoleActivityMetrics(technologyID)
 
-    // exemplo de retorno
-    return [
-      {
-        activityID: 1,
-        activity: "Cirurgia",
-        roleID: 2,
-        role: "Anestesista",
-        minimumDuration: 37 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        medianDuration: 72 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        maximumDuration: 129 / 60, // armazenado no banco em segundos, deve retornar em minutos
-        lastUpdate: "2020-06-03T12:40:32-0300", // ISO 8601
-      },
-    ]
+    return rawExecutionsData[0].map(rawResults => {
+      return {
+        activityID: rawResults.activity_id,
+        activity: rawResults.activity,
+        roleID: rawResults.role_id,
+        role: rawResults.role,
+        minimumDuration: rawResults.minimum,
+        medianDuration: rawResults.median,
+        maximumDuration: rawResults.maximum,
+        lastUpdate: rawResults.last_update,
+      }
+    })
   }
 
   /**
