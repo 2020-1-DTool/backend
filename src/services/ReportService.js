@@ -8,7 +8,7 @@ export default class ReportService {
    * Gera um relatório completo com todos os dados de uma instituição de saúde.
    *
    * @param {number} institutionID ID da instituição cujo relatório deve ser gerado.
-   * @returns {Promise<string>} Nome do arquivo XLSX temporário.
+   * @returns {Promise<{ write: (import('stream').Stream) => Promise<void> }>} Nome do arquivo XLSX temporário.
    */
   async generateCompleteReport(institutionID) {
     // Cria arquivo e adiciona algumas propriedades
@@ -39,7 +39,7 @@ export default class ReportService {
       for (let i = 0; i < exportedTechnologies.roles.length; i += 1) {
         const { name, shortName } = exportedTechnologies.roles[i]
         const role = shortName ? `${name} [${shortName}]` : name
-        definitions.columns = definitions.columns.concat([{ header: role, outlineLevel: 1, height: 32 }])
+        definitions.columns = definitions.columns.concat([{ header: role, outlineLevel: 1, height: 32, width: 20 }])
       }
 
       for (let i = 0; i < exportedTechnologies.activities.length; i += 1) {
@@ -153,9 +153,6 @@ export default class ReportService {
       consolidatedExecutions.addRows(exportConsolidatedExecutions)
     }
 
-    // Exporta arquivo
-    await workbook.xlsx.writeFile(`${institutionID}.xlsx`)
-
-    return `${institutionID}.xlsx`
+    return workbook.xlsx
   }
 }

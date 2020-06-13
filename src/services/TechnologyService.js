@@ -43,6 +43,7 @@ export default class TechnologyService {
    *
    * Objeto com a definição de uma tecnologia (atividades, ocupações e matriz atividade x ocupação).
    * @typedef {Object} TechnologyDefinition
+   * @property {string} technologyName Nome da tecnologia.
    * @property {{ name: string; shortName: string }[]} activities Lista de atividades, com nome completo e nome curto (se cadastrado), ordenadas pelo nome.
    * @property {{ name: string; shortName: string }[]} roles Lista de ocupações, com nome completo e nome curto (se cadastrado), ordenadas pelo nome.
    * @property {(string | null)[]} matrix Matriz com a definição de quais ocupações executam quais atividades, ordenada de acordo com o array em `activities`.
