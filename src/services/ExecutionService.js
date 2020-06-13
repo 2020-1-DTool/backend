@@ -1,4 +1,4 @@
-import { ExecutionDAO, RoleDAO, ActivityDAO, RoleActivityDAO } from "../models"
+import { ExecutionDAO, RoleActivityDAO } from "../models"
 
 export default class ExecutionService {
   /**
@@ -93,18 +93,6 @@ export default class ExecutionService {
    * @property {string} deviceToken Token que identifica o dispositivo onde a atividade foi executada.
    */
   async exportExecutions(technologyID) {
-    // TODO: implementar na task B01 (https://trello.com/c/A3NnYIil)
-    const resultData = ExecutionDAO.getExecutionsReport(technologyID)
-    return resultData
-    // exemplo de retorno
-    // return [
-    //   {
-    //     activity: "Cirurgia",
-    //     role: "Anestesista",
-    //     timestamp: "2020-05-31T12:44:58-0300",
-    //     duration: 289 / 60, // armazenado no banco em segundos, deve retornar em minutos
-    //     deviceToken: "323a5744-678c-426b-b086-3e442ece7179",
-    //   },
-    // ]
+    return ExecutionDAO.getExecutionsReport(technologyID)
   }
 }
