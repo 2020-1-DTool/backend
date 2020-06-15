@@ -8,27 +8,22 @@ export default appRouter => {
 
   // relatório simples (para gráficos do app)
   router.get("/simple", authService.middlewares.authenticated, async (req, res) => {
+    let { technology, role } = req.query
+    technology = parseInt(technology, 10)
+    role = parseInt(role, 10);
 
-    if (req.body.technology == null || req.body.role == null) {
+    if (!technology || !role) {
       res.status(400).json({
-        code: "bad_request/missing_fields",
+        code: "bad_request/missing_query_params",
         message: "Either 'technology' and 'role' values are required.",
       })
       return
     }
 
-    if (typeof req.body.technology !== 'number' || typeof req.body.role !== 'number') {
-      res.status(400).json({
-        code: "bad_request/missing_fields",
-        message: "Either 'technology' and 'role' values should be numbers.",
-      })
-      return
-    }
-
     const executionService = Container.get(ExecutionService)
-    const reportSimple = await executionService.exportConsolidatedExecutions(req.body.technology)
+    const reportSimple = await executionService.exportConsolidatedExecutions(technology)
 
-    const reportSimpleFilteredByRole = reportSimple.filter(rep => rep.roleID === req.body.role)
+    const reportSimpleFilteredByRole = reportSimple.filter(rep => rep.roleID === role)
     
     if (Object.keys(reportSimpleFilteredByRole).length === 0) {
       res.status(404).json({
