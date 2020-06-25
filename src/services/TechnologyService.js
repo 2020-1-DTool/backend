@@ -1,37 +1,27 @@
 import csvParser from "neat-csv"
-import { HealthInstitutionDAO, TechnologyDAO, ActivityDAO, RoleDAO, runInsert, sequelize } from "../models"
+import { TechnologyDAO, ActivityDAO, RoleDAO, runInsert, sequelize } from "../models"
 
 export default class TechnologyService {
   /**
    * Retorna as tecnologias de uma instituição de saúde.
    *
    * @param {number} institutionID Código (PK) da instituição de saúde.
+   * @param {boolean} [includeActivities=true] Se as atividades da tecnologia devem ser incluídas no retorno
    * @returns {{ id: number, name: string }[]} Todas as tecnologias relacionadas à instituição.
    */
-  async listTechnologies(institutionID) {
-    const institution = await HealthInstitutionDAO.findByPk(institutionID, {
-      include: TechnologyDAO,
+  async listTechnologies(institutionID, includeActivities = true) {
+    return TechnologyDAO.findAll({
+      where: {
+        $health_institution_id$: institutionID,
+      },
+      attributes: ["id", "name"],
+      include: includeActivities && [
+        {
+          model: ActivityDAO,
+          attributes: { exclude: ["technologyId"] },
+        },
+      ],
     })
-
-    const technologies = institution?.technologies.map(tech => {
-      return {
-        id: tech.id,
-        name: tech.name,
-      }
-    })
-
-    for (const tech of technologies) {
-      const technology = await TechnologyDAO.findByPk(tech.id, { include: ActivityDAO })
-      tech.activities = technology.activities.map(activity => {
-        return {
-          id: activity.id,
-          name: activity.name,
-          shortName: activity.shortName,
-        }
-      })
-    }
-
-    return technologies
   }
 
   /**
@@ -139,14 +129,17 @@ export default class TechnologyService {
     const { technologyName, activities, roles } = await this._parseCSVData(csvContents)
 
     // encapsulate everything in a transation to rollback if anything fails
-    await sequelize().transaction(async (t) => {
+    await sequelize().transaction(async t => {
       // 2: create the technology
       let technologyID
       try {
-        technologyID = await TechnologyDAO.createTechnology({
-          name: technologyName,
-          healthInstitutionId: institutionID,
-        }, t)
+        technologyID = await TechnologyDAO.createTechnology(
+          {
+            name: technologyName,
+            healthInstitutionId: institutionID,
+          },
+          t
+        )
       } catch (error) {
         if (error.message === "no_name") {
           throw new Error("invalid_csv")
@@ -190,12 +183,15 @@ export default class TechnologyService {
       })
 
       // 5.3: save relations
-      await runInsert(`
+      await runInsert(
+        `
       INSERT INTO health_institution_roles (role_id, health_institution_id)
         VALUES ${roleHealthInstitutionRelations};
       INSERT INTO role_activities (role_id, activity_id)
         VALUES ${roleActivityRelations};
-      `, t)
+      `,
+        t
+      )
     })
   }
 

@@ -38,7 +38,7 @@ export default appRouter => {
     }
 
     // lista atualizada de tecnologias
-    const technologies = await technologyService.listTechnologies(institutionId)
+    const technologies = await technologyService.listTechnologies(institutionId, false)
     res.json(technologies)
   })
 
