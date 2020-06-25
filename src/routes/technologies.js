@@ -8,7 +8,7 @@ export default appRouter => {
   const healthInstitutionService = Container.get(HealthInstitutionService)
   const technologyService = Container.get(TechnologyService)
 
-  // importar tecnologia
+  // import technology
   router.post("/", authService.middlewares.requireHospitalAdministration, async (req, res) => {
     const healthInstitution = await healthInstitutionService.getInformations(req.auth.accessCode)
     const institutionId = healthInstitution.id
@@ -38,6 +38,15 @@ export default appRouter => {
     }
 
     // lista atualizada de tecnologias
+    const technologies = await technologyService.listTechnologies(institutionId, false)
+    res.json(technologies)
+  })
+
+  // list technologies
+  router.get("/", authService.middlewares.requireHospitalAdministration, async (req, res) => {
+    const healthInstitution = await healthInstitutionService.getInformations(req.auth.accessCode)
+    const institutionId = healthInstitution.id
+
     const technologies = await technologyService.listTechnologies(institutionId, false)
     res.json(technologies)
   })
