@@ -89,6 +89,7 @@ export default class ExecutionService {
    * @property {string} activity Nome da atividade.
    * @property {string} role Nome da ocupação.
    * @property {string} timestamp Timestamp do início da execução.
+   * @property {string} endDate Timestamp do fim da execução.
    * @property {number} duration Duração da execução (em minutos).
    * @property {string} deviceToken Token que identifica o dispositivo onde a atividade foi executada.
    */

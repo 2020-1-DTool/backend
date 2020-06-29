@@ -2148,7 +2148,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\"executions\": [\n\t\t{\n\t\t\t\"activityId\": 14,\n\t\t\t\"roleId\": 4,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 3,\n\t\t\t\"roleId\": 9,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
+          "raw": "{\n\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\"executions\": [\n\t\t{\n\t\t\t\"activityId\": 14,\n\t\t\t\"roleId\": 4,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"endDate\": \"2020-04-04T18:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 3,\n\t\t\t\"roleId\": 9,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"endDate\": \"2020-04-04T20:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -2164,7 +2164,7 @@
             "executions"
           ]
         },
-        "description": "Permite registrar a execução de múltiplas atividades em um único request.\n\n> Requer autenticação com permissão `time-tracking`.\n\nDeve ser passado um payload JSON contendo um objeto com a identificação do dispositivo que fez a leitura (`deviceToken`) e uma lista de registros de execução (`executions`), onde cada objeto deve conter as seguintes informações:\n- id da atividade executada (`activityId`);\n- id da ocupação do funcionário que executou a atividade (`roleId`);\n- timestamp da data de início da execução, no padrão [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`timestamp`); e\n- duração da atividade, em segundos (`duration`)."
+        "description": "Permite registrar a execução de múltiplas atividades em um único request.\n\n> Requer autenticação com permissão `time-tracking`.\n\nDeve ser passado um payload JSON contendo um objeto com a identificação do dispositivo que fez a leitura (`deviceToken`) e uma lista de registros de execução (`executions`), onde cada objeto deve conter as seguintes informações:\n- id da atividade executada (`activityId`);\n- id da ocupação do funcionário que executou a atividade (`roleId`);\n- timestamp da data de início da execução, no padrão [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`timestamp`);\n- timestamp da data final da execução, no padrão [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) (`timestamp`); e\n- duração da atividade, em segundos (`duration`)."
       },
       "response": [
         {
@@ -2175,7 +2175,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\"executions\": [\n\t\t{\n\t\t\t\"activityId\": 1,\n\t\t\t\"roleId\": 1,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 1,\n\t\t\t\"roleId\": 16,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
+              "raw": "{\n\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\"executions\": [\n\t\t{\n\t\t\t\"activityId\": 14,\n\t\t\t\"roleId\": 4,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"endDate\": \"2020-04-04T18:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 3,\n\t\t\t\"roleId\": 9,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"endDate\": \"2020-04-04T20:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2208,7 +2208,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"executions\": [\n\t\t{\n\t\t\t\"activityId\": 1,\n\t\t\t\"roleId\": 1,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 1,\n\t\t\t\"roleId\": 16,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
+              "raw": "{\n\t\"executions\": [\n\t\t{\n\t\t\t\"activityId\": 14,\n\t\t\t\"roleId\": 4,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"endDate\": \"2020-04-04T18:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 3,\n\t\t\t\"roleId\": 9,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"endDate\": \"2020-04-04T20:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2303,7 +2303,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\"executions\": [\n\t\t{\n\t\t\t\"roleId\": 1,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 1,\n\t\t\t\"roleId\": 16,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
+              "raw": "{\n\t\"deviceToken\": \"qwertyuiopasdfghjklzxcvbnm1234567890\",\n\t\"executions\": [\n\t\t{\n\t\t\t\"roleId\": 1,\n\t\t\t\"timestamp\": \"2020-04-04T14:20:37-0300\",\n\t\t\t\"endDate\": \"2020-04-04T18:20:37-0300\",\n\t\t\t\"duration\": 97\n\t\t},\n\t\t{\n\t\t\t\"activityId\": 1,\n\t\t\t\"roleId\": 16,\n\t\t\t\"timestamp\": \"2020-04-04T18:00:54-0300\",\n\t\t\t\"endDate\": \"2020-04-04T20:00:54-0300\",\n\t\t\t\"duration\": 326\n\t\t}\n\t]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2355,7 +2355,7 @@
           ],
           "cookie": [],
           "responseTime": null,
-          "body": "{\n    \"code\": \"bad_request/missing_fields\",\n    \"message\": \"fields 'activityId', 'roleId', 'timestamp' and 'duration' are required on all executions\"\n}"
+          "body": "{\n    \"code\": \"bad_request/missing_fields\",\n    \"message\": \"fields 'activityId', 'roleId', 'timestamp', `endDate` and 'duration' are required on all executions\"\n}"
         }
       ]
     }
