@@ -1,5 +1,5 @@
 import { Model, DataTypes } from "sequelize"
-import { ExecutionDAO } from "."
+import ExecutionDAO from "./ExecutionDAO"
 
 export default class RoleActivityDAO extends Model {
   
