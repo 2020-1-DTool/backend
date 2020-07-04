@@ -94,6 +94,7 @@ export default class ReportService {
         { header: "Atividade", key: "activity", width: 56 },
         { header: "Ocupação", key: "role", width: 56 },
         { header: "Início", key: "timestamp", width: 25, style: { numFmt: "dd/MM/yyyy\\ hh:mm:ss.SSS" } },
+        { header: "Fim", key: "endDate", width: 25, style: { numFmt: "dd/MM/yyyy\\ hh:mm:ss.SSS" } },
         { header: "Duração (minutos)", key: "duration", width: 25 },
         { header: "Dispositivo", key: "deviceToken", width: 40, style: { alignment: { horizontal: "right" } } },
       ]

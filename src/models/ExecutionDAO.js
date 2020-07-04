@@ -4,7 +4,7 @@ export default class ExecutionDAO extends Model {
   static async getExecutionsReport(technologyID) {
     return this.sequelize.query(
       `
-      SELECT A.name AS activity,R.name AS role, E.timestamp AS timestamp ,E.duration / 60 AS duration, E.device_token AS "deviceToken"
+      SELECT A.name AS activity, R.name AS role, E.timestamp AS timestamp, E.end_date AS "endDate", E.duration / 60 AS duration, E.device_token AS "deviceToken"
       FROM executions AS E INNER JOIN role_activities AS RA ON E.role_id = RA.role_id AND E.activity_id = RA.activity_id
       INNER JOIN roles AS R ON RA.role_id = R.id
       INNER JOIN activities AS A ON RA.activity_id = A.id
@@ -39,6 +39,10 @@ export const setup = sequelize => {
         // logo não tem como usar `references` do Sequelize
       },
       timestamp: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      endDate: {
         type: DataTypes.DATE,
         allowNull: false,
       },

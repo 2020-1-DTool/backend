@@ -69,5 +69,5 @@ const exportEnvironment = environmentID => {
     })
 }
 
-exportCollection("10919351-fdca2029-2ca3-46bf-bf13-3cb414c81bc1") // dTool API
-exportEnvironment("10919351-5b898140-c423-439f-a956-b0f7d87efc97") // DT-development
+exportCollection("10919351-173ef936-fc8e-4636-91c7-04926cba0ba5") // dTool API
+exportEnvironment("10919351-5b898140-c423-439f-a956-b0f7d87efc97") // DT-local
